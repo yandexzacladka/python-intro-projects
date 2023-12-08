@@ -57,35 +57,45 @@ class PDFViewer:
             text = page.extract_text()
             self.pdf_text.set(text)
 
-            # Очищаем и вставляем текст в текстовое поле для отображения всего текста на странице
+            # Очистить и вставить текст в текстовое поле для отображения всего текста на странице
             self.full_text_display.delete(1.0, tk.END)
             self.full_text_display.insert(tk.END, text)
 
     def h_text(self):
         selected_text = self.full_text_display.get(tk.SEL_FIRST, tk.SEL_LAST)
 
-        # Переводим выделенный текст на русский
+        # Перевод выделенного текста на русский
         translated_text = self.translate_text(selected_text)
 
-        # Создаем новое окно для отображения выделенного и переведенного текста
-        top_level = tk.Toplevel(self.root)
-        top_level.title("Выделенный и переведенный текст")
+        # Краткий пересказ переведенного текста
+        summary = self.summarize_text(translated_text)
 
-        # Отображаем выделенный текст
+        # Новое окно для отображения выделенного, переведенного текста и краткого пересказа
+        top_level = tk.Toplevel(self.root)
+        top_level.title("Выделенный, переведенный текст и краткий пересказ")
+
+        # Отображение выделенного текста
         selected_text_label = tk.Label(top_level, text=f"Выделенный текст: {selected_text}")
         selected_text_label.pack(padx=10, pady=5)
 
-        # Отображаем переведенный текст
+        # Отображение переведенного текста
         translated_text_label = tk.Label(top_level, text=f"Переведенный текст: {translated_text}")
         translated_text_label.pack(padx=10, pady=5)
 
+        # Отображение краткого пересказа
+        summary_label = tk.Label(top_level, text=f"Краткий пересказ: {summary}")
+        summary_label.pack(padx=10, pady=5)
+
     def translate_text(self, text):
-            translator = Translator(to_lang="ru")
-            translation = translator.translate(text)
-            return translation
+        translator = Translator(to_lang="ru")
+        translation = translator.translate(text)
+        return translation
 
+    def summarize_text(self, text):
+        # Просто возвращаю первые 50 символов текста в качестве краткого пересказа
+        return text[:50]
 
-# Создаем главное окно
+# Главное окно
 root = tk.Tk()
 app = PDFViewer(root)
 root.mainloop()
